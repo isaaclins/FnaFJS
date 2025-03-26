@@ -1,10 +1,8 @@
 import * as THREE from 'three';
 
-// main.js
-
 // Scene, Camera, Renderer
 const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, 0.1, 1000);
+const camera = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, 0.1, 1000); // updated FOV to 80
 const renderer = new THREE.WebGLRenderer();
 
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -16,6 +14,43 @@ const ceiling = new THREE.Mesh(new THREE.PlaneGeometry(10, 10), ceilingMaterial)
 ceiling.rotation.x = Math.PI / 2;
 ceiling.position.y = 2.5;
 scene.add(ceiling);
+
+// left door
+const leftDoorMaterial = new THREE.MeshBasicMaterial({ color: 0x444444 });
+const leftDoor = new THREE.Mesh(new THREE.PlaneGeometry(2.5, 10), leftDoorMaterial);
+leftDoor.rotation.y = Math.PI / 2;
+leftDoor.position.x = -5;
+leftDoor.position.y = -2.5;
+leftDoor.position.z = -3.75;
+scene.add(leftDoor);
+
+// right door
+const rightDoorMaterial = new THREE.MeshBasicMaterial({ color: 0x444444 });
+const rightDoor = new THREE.Mesh(new THREE.PlaneGeometry(2.5, 10), rightDoorMaterial);
+rightDoor.rotation.y = -Math.PI / 2;
+rightDoor.position.x = 5;
+rightDoor.position.y = -2.5;
+rightDoor.position.z = -3.75;
+scene.add(rightDoor);
+
+// Define target positions for the doors (initially set to the closed position)
+let leftDoorTargetY = leftDoor.position.y;
+let rightDoorTargetY = rightDoor.position.y;
+
+// Instead of immediately setting the door positions, update the target values.
+function closeLeftDoor() {
+    leftDoorTargetY = -2.5;
+}
+function openLeftDoor() {
+    leftDoorTargetY = 15;
+}
+
+function closeRightDoor() {
+    rightDoorTargetY = -2.5;
+}
+function openRightDoor() {
+    rightDoorTargetY = 15;
+}
 
 // Office Walls (Rectangles)
 const wallMaterial = new THREE.MeshBasicMaterial({ color: 0x555555 });
@@ -74,9 +109,11 @@ cameraScreen.style.fontSize = '2em';
 cameraScreen.style.transition = 'opacity 1s'; // Animation duration
 cameraScreen.innerText = 'CAMERA FEED';
 document.body.appendChild(cameraScreen);
+
 let leftDoorStatus = 'open';
 let rightDoorStatus = 'open';
-// Listen for spacebar keydown to toggle camera screen
+
+// Listen for keydown events
 document.addEventListener('keydown', (event) => {
     if (event.code === 'Space') {
         isCameraScreenActive = !isCameraScreenActive;
@@ -84,21 +121,22 @@ document.addEventListener('keydown', (event) => {
     }
     if (event.code === 'KeyA') {
         if (leftDoorStatus === 'closed') {
-            
+            openLeftDoor();
             leftDoorStatus = 'open';
             console.log("left door open");
         } else if (leftDoorStatus === 'open') {
+            closeLeftDoor();
             leftDoorStatus = 'closed';
             console.log("left door closed");
         }
     }
     if (event.code === 'KeyD') {
-            
         if (rightDoorStatus === 'closed') {
+            openRightDoor();
             rightDoorStatus = 'open';
             console.log("right door open");
-        }
-        else if (rightDoorStatus === 'open') {
+        } else if (rightDoorStatus === 'open') {
+            closeRightDoor();
             rightDoorStatus = 'closed';
             console.log("right door closed");
         }
@@ -111,6 +149,15 @@ function animate() {
 
     // Rotate camera based on mouse movement
     camera.rotation.y = mouseX;
+
+    // Smoothly update door positions using linear interpolation.
+    const doorSpeed = 0.05; // Adjust this value to change the movement speed
+
+    // Update left door position
+    leftDoor.position.y += (leftDoorTargetY - leftDoor.position.y) * doorSpeed;
+    
+    // Update right door position
+    rightDoor.position.y += (rightDoorTargetY - rightDoor.position.y) * doorSpeed;
 
     renderer.render(scene, camera);
 }
