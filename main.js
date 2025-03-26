@@ -140,7 +140,21 @@ powerPercentage.style.color = 'white';
 powerPercentage.style.fontSize = '2em';
 document.body.appendChild(powerPercentage);
 
+let inGameTime = document.createElement('div');
+inGameTime.id = 'inGameTime';
+inGameTime.style.position = 'fixed';
+inGameTime.style.top = '0.5em';
+inGameTime.style.left = '0.5em';
+inGameTime.style.color = 'white';
+inGameTime.style.fontSize = '2em';
+inGameTime.innerText = '12:00PM';
+document.body.appendChild(inGameTime);
+let timeInSeconds = 0;
 
+setInterval(() => {
+    timeInSeconds++;
+    console.log("hello");
+}, 1000);
 function updatePowerPercentage() {
     powerPercentage.innerText = 'Power Percentage: ' + Math.floor((powerConsumptionLevel / 10) * 100) + '%';
 }
