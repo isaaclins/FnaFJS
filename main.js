@@ -37,20 +37,29 @@ scene.add(rightDoor);
 // Define target positions for the doors (initially set to the closed position)
 let leftDoorTargetY = leftDoor.position.y;
 let rightDoorTargetY = rightDoor.position.y;
+let powerConsumptionLevel = 0;
+let mouseX = 0;
+let isCameraScreenActive = false;
+let leftDoorStatus = 'open';
+let rightDoorStatus = 'open';
 
 // Instead of immediately setting the door positions, update the target values.
 function closeLeftDoor() {
     leftDoorTargetY = -2.5;
+    powerConsumptionLevel += 1;
 }
 function openLeftDoor() {
     leftDoorTargetY = 15;
+    powerConsumptionLevel -= 1;
 }
 
 function closeRightDoor() {
     rightDoorTargetY = -2.5;
+    powerConsumptionLevel += 1;
 }
 function openRightDoor() {
     rightDoorTargetY = 15;
+    powerConsumptionLevel -= 1;
 }
 
 // Office Walls (Rectangles)
@@ -80,19 +89,21 @@ floor.rotation.x = -Math.PI / 2;
 floor.position.y = -2.5;
 scene.add(floor);
 
+
 // Camera Position
 camera.position.z = 0;
 camera.position.y = 0;
 
 // Mouse Movement for Looking Around
-let mouseX = 0;
+
 document.addEventListener('mousemove', (event) => {
     const normalizedX = (event.clientX / window.innerWidth) * 2 - 1;
     mouseX = -normalizedX * Math.PI / 4;
 });
 
+
 // Create a camera screen overlay
-let isCameraScreenActive = false;
+
 const cameraScreen = document.createElement('div');
 cameraScreen.id = 'cameraScreen';
 cameraScreen.style.position = 'fixed';
@@ -111,43 +122,52 @@ cameraScreen.style.transition = 'opacity 1s'; // Animation duration
 cameraScreen.innerText = 'CAMERA FEED';
 document.body.appendChild(cameraScreen);
 
-let leftDoorStatus = 'open';
-let rightDoorStatus = 'open';
+
 
 // Listen for keydown events
 document.addEventListener('keydown', (event) => {
     if (event.code === 'Space') {
-        isCameraScreenActive = !isCameraScreenActive;
-        cameraScreen.style.opacity = isCameraScreenActive ? '1' : '0';
+        if (isCameraScreenActive) {
+            cameraScreen.style.opacity = '0';
+            isCameraScreenActive = false;
+            powerConsumptionLevel -= 1;
+        }
+        else {
+            cameraScreen.style.opacity = '1';
+            isCameraScreenActive = true;
+            powerConsumptionLevel += 1;
+        }
     }
     if (event.code === 'KeyA') {
-        if (leftDoorStatus === 'closed') {
-            openLeftDoor();
-            leftDoorStatus = 'open';
-            console.log("left door open");
-        } else if (leftDoorStatus === 'open') {
+         if (leftDoorStatus === 'open') {
             closeLeftDoor();
             leftDoorStatus = 'closed';
             console.log("left door closed");
+        }else if (leftDoorStatus === 'closed') {
+            openLeftDoor();
+            leftDoorStatus = 'open';
+            console.log("left door open");
         }
     }
     if (event.code === 'KeyD') {
-        if (rightDoorStatus === 'closed') {
-            openRightDoor();
-            rightDoorStatus = 'open';
-            console.log("right door open");
-        } else if (rightDoorStatus === 'open') {
+          if (rightDoorStatus === 'open') {
             closeRightDoor();
             rightDoorStatus = 'closed';
             console.log("right door closed");
+        }else if (rightDoorStatus === 'closed') {
+            openRightDoor();
+            rightDoorStatus = 'open';
+            console.log("right door open");
         }
     }
+    if (event.code === 'KeyW') {
+        powerConsumptionLevel.innerText = 'Power Consumption Level: ' + powerConsumptionLevel;
+    }
 });
-
 // Animation Loop
 function animate() {
     requestAnimationFrame(animate);
-
+    console.log(powerConsumptionLevel);
     // Rotate camera based on mouse movement
     camera.rotation.y = mouseX;
 
