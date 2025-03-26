@@ -9,6 +9,7 @@ const renderer = new THREE.WebGLRenderer();
 
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
+
 // Ceiling
 const ceilingMaterial = new THREE.MeshBasicMaterial({ color: 0x444444 });
 const ceiling = new THREE.Mesh(new THREE.PlaneGeometry(10, 10), ceilingMaterial);
@@ -52,6 +53,56 @@ let mouseX = 0;
 document.addEventListener('mousemove', (event) => {
     const normalizedX = (event.clientX / window.innerWidth) * 2 - 1;
     mouseX = -normalizedX * Math.PI / 4;
+});
+
+// Create a camera screen overlay
+let isCameraScreenActive = false;
+const cameraScreen = document.createElement('div');
+cameraScreen.id = 'cameraScreen';
+cameraScreen.style.position = 'fixed';
+cameraScreen.style.top = '0';
+cameraScreen.style.left = '0';
+cameraScreen.style.width = '100%';
+cameraScreen.style.height = '100%';
+cameraScreen.style.backgroundColor = 'black';
+cameraScreen.style.opacity = '0';
+cameraScreen.style.display = 'flex';
+cameraScreen.style.alignItems = 'center';
+cameraScreen.style.justifyContent = 'center';
+cameraScreen.style.color = 'white';
+cameraScreen.style.fontSize = '2em';
+cameraScreen.style.transition = 'opacity 1s'; // Animation duration
+cameraScreen.innerText = 'CAMERA FEED';
+document.body.appendChild(cameraScreen);
+let leftDoorStatus = 'open';
+let rightDoorStatus = 'open';
+// Listen for spacebar keydown to toggle camera screen
+document.addEventListener('keydown', (event) => {
+    if (event.code === 'Space') {
+        isCameraScreenActive = !isCameraScreenActive;
+        cameraScreen.style.opacity = isCameraScreenActive ? '1' : '0';
+    }
+    if (event.code === 'KeyA') {
+        if (leftDoorStatus === 'closed') {
+            
+            leftDoorStatus = 'open';
+            console.log("left door open");
+        } else if (leftDoorStatus === 'open') {
+            leftDoorStatus = 'closed';
+            console.log("left door closed");
+        }
+    }
+    if (event.code === 'KeyD') {
+            
+        if (rightDoorStatus === 'closed') {
+            rightDoorStatus = 'open';
+            console.log("right door open");
+        }
+        else if (rightDoorStatus === 'open') {
+            rightDoorStatus = 'closed';
+            console.log("right door closed");
+        }
+    }
 });
 
 // Animation Loop
