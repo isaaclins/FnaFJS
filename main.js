@@ -34,7 +34,7 @@ rightDoor.position.y = -2.5;
 rightDoor.position.z = -3.75;
 scene.add(rightDoor);
 
-// Define target positions for the doors (initially set to the closed position)
+// Define variables
 let leftDoorTargetY = leftDoor.position.y;
 let rightDoorTargetY = rightDoor.position.y;
 let powerConsumptionLevel = 0;
@@ -122,7 +122,14 @@ cameraScreen.style.transition = 'opacity 1s'; // Animation duration
 cameraScreen.innerText = 'CAMERA FEED';
 document.body.appendChild(cameraScreen);
 
-
+let powerConsumptionLevelText = document.createElement('div');
+powerConsumptionLevelText.id = 'powerConsumptionLevelText';
+powerConsumptionLevelText.style.position = 'fixed';
+powerConsumptionLevelText.style.bottom = '0';
+powerConsumptionLevelText.style.left = '0';
+powerConsumptionLevelText.style.color = 'white';
+powerConsumptionLevelText.style.fontSize = '2em';
+document.body.appendChild(powerConsumptionLevelText);
 
 // Listen for keydown events
 document.addEventListener('keydown', (event) => {
@@ -168,6 +175,8 @@ document.addEventListener('keydown', (event) => {
 function animate() {
     requestAnimationFrame(animate);
     console.log(powerConsumptionLevel);
+    powerConsumptionLevelText.innerText = 'Power Consumption Level: ' + powerConsumptionLevel; 
+
     // Rotate camera based on mouse movement
     camera.rotation.y = mouseX;
 
