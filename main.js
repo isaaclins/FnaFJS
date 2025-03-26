@@ -131,6 +131,20 @@ powerConsumptionLevelText.style.color = 'white';
 powerConsumptionLevelText.style.fontSize = '2em';
 document.body.appendChild(powerConsumptionLevelText);
 
+let powerPercentage = document.createElement('div');
+powerPercentage.id = 'powerPercentage';
+powerPercentage.style.position = 'fixed';
+powerPercentage.style.bottom = '0';
+powerPercentage.style.right = '0';
+powerPercentage.style.color = 'white';
+powerPercentage.style.fontSize = '2em';
+document.body.appendChild(powerPercentage);
+
+
+function updatePowerPercentage() {
+    powerPercentage.innerText = 'Power Percentage: ' + Math.floor((powerConsumptionLevel / 10) * 100) + '%';
+}
+
 // Listen for keydown events
 document.addEventListener('keydown', (event) => {
     if (event.code === 'Space') {
@@ -176,7 +190,7 @@ function animate() {
     requestAnimationFrame(animate);
     console.log(powerConsumptionLevel);
     powerConsumptionLevelText.innerText = 'Power Consumption Level: ' + powerConsumptionLevel; 
-
+    updatePowerPercentage();
     // Rotate camera based on mouse movement
     camera.rotation.y = mouseX;
 
